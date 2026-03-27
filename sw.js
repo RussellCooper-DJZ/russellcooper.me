@@ -4,14 +4,14 @@
  * Purpose: Reduce origin load under high traffic, enable offline access
  */
 
-const CACHE_NAME = 'rc-portfolio-v1';
-const STATIC_CACHE = 'rc-static-v1';
+const CACHE_NAME = 'rc-portfolio-v2';
+const STATIC_CACHE = 'rc-static-v2';
 
 // Assets to pre-cache on install (critical path)
 const PRECACHE_ASSETS = [
   '/',
-  '/assets/index-SVyT6XHO.js',
-  '/assets/index-DPQAAFZr.css',
+  '/assets/index-ChvBLIfe.js',
+  '/assets/index-ClYsjVYw.css',
   '/assets/wechat_qr.png',
 ];
 
