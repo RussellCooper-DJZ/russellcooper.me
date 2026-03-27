@@ -1,0 +1,18 @@
+{
+  "name": "Russell Cooper — Embedded Systems Engineer",
+  "short_name": "Russell Cooper",
+  "description": "Portfolio of Russell Cooper, Embedded Systems Engineer specializing in ARM Cortex-M, STM32, Machine Vision, and PCB Design.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#22c55e",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/wechat_qr.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
