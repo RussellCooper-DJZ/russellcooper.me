@@ -10,7 +10,7 @@ const STATIC_CACHE = 'rc-static-v2';
 // Assets to pre-cache on install (critical path)
 const PRECACHE_ASSETS = [
   '/',
-  '/assets/index-OXjZ4-dU.js',
+  '/assets/index-JarJS_wb.js',
   '/assets/index-DYLj4dsm.css',
   '/assets/wechat_qr.png',
 ];
