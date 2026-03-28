@@ -1,17 +1,20 @@
 /**
  * Service Worker for russellcooper.me
- * Strategy: Cache-First for static assets, Network-First for HTML
- * Purpose: Reduce origin load under high traffic, enable offline access
+ * Strategy: Stale-While-Revalidate for most assets, Network-First for HTML
+ * Purpose: Instant loading, offline access, and background updates
  */
 
-const CACHE_NAME = 'rc-portfolio-v2';
-const STATIC_CACHE = 'rc-static-v2';
+const CACHE_NAME = 'rc-portfolio-v3';
+const STATIC_CACHE = 'rc-static-v3';
 
 // Assets to pre-cache on install (critical path)
+// Updated with latest build hashes from March 2026
 const PRECACHE_ASSETS = [
   '/',
-  '/assets/index-CWqWoWHI.js',
-  '/assets/index-j_n99VGs.css',
+  '/assets/index-B59Olrk2.js',
+  '/assets/vendor-core-wOJwx7kQ.js',
+  '/assets/vendor-ui-CM71TTxK.js',
+  '/assets/index-CmGxIbAT.css',
   '/assets/wechat_qr.png',
 ];
 
@@ -44,99 +47,68 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET, cross-origin analytics, and chrome-extension requests
+  // Skip non-GET, analytics, and chrome-extension requests
   if (
     request.method !== 'GET' ||
-    url.pathname === '/umami' ||
-    !url.origin.includes('russellcooper.me') && !url.origin.includes('localhost') && !url.origin.includes('127.0.0.1') && !url.origin.includes('fonts.googleapis.com') && !url.origin.includes('fonts.gstatic.com')
+    url.pathname.includes('/umami') ||
+    (!url.origin.includes('russellcooper.me') && 
+     !url.origin.includes('localhost') && 
+     !url.origin.includes('fonts.googleapis.com') && 
+     !url.origin.includes('fonts.gstatic.com'))
   ) {
     return;
   }
 
-  // Strategy 1: Cache-First for hashed static assets (JS, CSS, images)
-  // These files have content-hash in filename → safe to cache forever
-  if (
-    url.pathname.startsWith('/assets/') ||
-    url.pathname.endsWith('.woff2') ||
-    url.pathname.endsWith('.woff') ||
-    url.pathname.endsWith('.ttf')
-  ) {
+  // Strategy 1: Cache-First for versioned assets (JS, CSS)
+  if (url.pathname.startsWith('/assets/') && (url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
     event.respondWith(cacheFirst(request));
     return;
   }
 
-  // Strategy 2: Stale-While-Revalidate for Google Fonts CSS
-  if (url.origin.includes('fonts.googleapis.com') || url.origin.includes('fonts.gstatic.com')) {
+  // Strategy 2: Stale-While-Revalidate for images and fonts
+  if (
+    url.pathname.match(/\.(png|jpg|jpeg|gif|webp|avif|svg|woff2|woff|ttf)$/) ||
+    url.origin.includes('fonts.gstatic.com')
+  ) {
     event.respondWith(staleWhileRevalidate(request));
     return;
   }
 
-  // Strategy 3: Network-First with cache fallback for HTML (index.html)
+  // Strategy 3: Network-First with cache fallback for HTML/Root
   event.respondWith(networkFirstWithFallback(request));
 });
 
 // ── Cache Strategies ─────────────────────────────────────────────────────────
 
-/**
- * Cache-First: serve from cache, fetch from network only on miss.
- * Best for versioned/hashed assets that never change.
- */
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(STATIC_CACHE);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch (err) {
-    return new Response('Asset unavailable offline', { status: 503 });
+  const response = await fetch(request);
+  if (response.ok) {
+    const cache = await caches.open(STATIC_CACHE);
+    cache.put(request, response.clone());
   }
+  return response;
 }
 
-/**
- * Stale-While-Revalidate: serve cached immediately, update cache in background.
- * Best for fonts and semi-static resources.
- */
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
-
   const fetchPromise = fetch(request).then((response) => {
     if (response.ok) cache.put(request, response.clone());
     return response;
   }).catch(() => null);
-
-  return cached || await fetchPromise || new Response('', { status: 503 });
+  return cached || await fetchPromise;
 }
 
-/**
- * Network-First with cache fallback: try network, fall back to cache.
- * Best for HTML pages that should always be fresh but need offline support.
- */
 async function networkFirstWithFallback(request) {
   const cache = await caches.open(CACHE_NAME);
-
   try {
-    const response = await fetch(request, { signal: AbortSignal.timeout(5000) });
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
+    const response = await fetch(request, { signal: AbortSignal.timeout(3000) });
+    if (response.ok) cache.put(request, response.clone());
     return response;
   } catch (err) {
     const cached = await cache.match(request);
-    if (cached) return cached;
-
-    // Ultimate fallback: serve cached index.html for SPA navigation
-    const indexFallback = await cache.match('/') || await caches.match('/');
-    if (indexFallback) return indexFallback;
-
-    return new Response(
-      '<!doctype html><html><body><p style="font-family:monospace;padding:2rem">russellcooper.me is temporarily unavailable. Please check your connection.</p></body></html>',
-      { status: 503, headers: { 'Content-Type': 'text/html' } }
-    );
+    return cached || await caches.match('/');
   }
 }
