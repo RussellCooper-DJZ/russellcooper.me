@@ -1,0 +1,33 @@
+{
+  "seo": {
+    "defaultTitle": "Russell Cooper | Embedded Systems Engineer",
+    "titleTemplate": "%s | Russell Cooper",
+    "description": "Embedded Systems Engineer specializing in RTOS, firmware development, and hardware-software co-design.",
+    "canonical": "https://russellcooper.me",
+    "openGraph": {
+      "type": "website",
+      "locale": "en_US",
+      "url": "https://russellcooper.me",
+      "siteName": "Russell Cooper Portfolio",
+      "images": [
+        {
+          "url": "https://russellcooper.me/og-image.png",
+          "width": 1200,
+          "height": 630,
+          "alt": "Russell Cooper - Embedded Systems Engineer"
+        }
+      ]
+    },
+    "twitter": {
+      "handle": "@RussellCooper",
+      "site": "@RussellCooper",
+      "cardType": "summary_large_image"
+    },
+    "additionalMetaTags": [
+      {"name": "keywords", "content": "embedded systems, firmware, RTOS, C, C++, STM32, ESP32, FPGA, IoT"},
+      {"name": "author", "content": "Russell Cooper"},
+      {"name": "robots", "content": "index, follow"},
+      {"name": "theme-color", "content": "#0f172a"}
+    ]
+  }
+}
