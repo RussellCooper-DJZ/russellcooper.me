@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard-rc
+Disallow: /admin-login
+
+Sitemap: https://russellcooper.me/sitemap.xml
