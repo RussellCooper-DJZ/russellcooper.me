@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title>Russell Cooper RC</title>
+  <desc>PCB inspired RC monogram</desc>
+  <rect width="64" height="64" rx="8" fill="#10110f"/>
+  <path d="M8 18h14M8 32h8M42 14v10M42 40v10M18 52h14M50 32h6" stroke="#cd9544" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="8" cy="18" r="3" fill="#cd9544"/>
+  <circle cx="42" cy="14" r="3" fill="#cd9544"/>
+  <circle cx="18" cy="52" r="3" fill="#cd9544"/>
+  <circle cx="56" cy="32" r="3" fill="#cd9544"/>
+  <path d="M25 20h8a8 8 0 0 1 0 16h-8V20Zm0 16 10 10M40 20h8a8 8 0 0 1 0 16h-8V20Zm0 16 10 10" fill="none" stroke="#f3d29a" stroke-width="4" stroke-linejoin="round"/>
+</svg>
